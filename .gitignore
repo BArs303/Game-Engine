@@ -1,1 +1,5 @@
 game-engine
+build
+source/glad.c
+headers/glad
+headers/KHR
