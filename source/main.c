@@ -23,14 +23,21 @@ int main()
 	int success;
 	GLFWwindow *window;
 	unsigned int vertex_shader, fragment_shader, shader_program;
-	GLuint VBO, VAO;
+	GLuint VBO, VAO, EBO;
 	char info_log[log_size];
 
 	float vertices[] =
 	{
 		0.0f, 0.0f,	//Vertex 1 (x,y)
 		0.0f, 0.5f,	//Vertex 2
-		0.5f, 0.0f	//Vertex 3
+		0.5f, 0.0f,	//Vertex 3
+		0.5f, 0.5f
+	};
+
+	unsigned int indices[] =
+	{
+		0, 1, 2,	//first triangle
+		1, 2, 3		//second triangle
 	};
 
 	width = 800;
@@ -113,10 +120,13 @@ int main()
 	glGenBuffers(1, &VBO);
 	/*Generate vertex array object*/
 	glGenBuffers(1, &VAO);
+	/*Generate element buffer object*/
+	glGenBuffers(1, &EBO);
 
 	/*bind the Vertex Array Object first*/
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
 	/*Load vertex to GraphicCard memory*/
 	glBufferData
@@ -124,6 +134,13 @@ int main()
 		GL_ARRAY_BUFFER,
 		sizeof(vertices),
 		vertices,
+		GL_STATIC_DRAW
+	);
+	glBufferData
+	(
+		GL_ELEMENT_ARRAY_BUFFER,
+		sizeof(indices),
+		indices,
 		GL_STATIC_DRAW
 	);
 
@@ -149,7 +166,10 @@ int main()
 
 		glUseProgram(shader_program);
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		/*Six verticles in 2 triangles
+		  GL_UNSIGNED_INT - type of the indices
+		  EBO - offset*/
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
